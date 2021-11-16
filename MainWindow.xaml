@@ -1,0 +1,33 @@
+﻿<Window x:Class="ProjectCurrencyCalculator.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ProjectCurrencyCalculator" xmlns:viewmodels="clr-namespace:ProjectCurrencyCalculator.Viewmodels" d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewmodel}"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <TabControl TabStripPlacement="Top" Margin="10">
+            <TabItem Header="Table">
+                <Grid>
+                    <DataGrid  AutoGenerateColumns="False" ItemsSource="{Binding  Source=exchanges}" Margin="10,10,319,99" IsSynchronizedWithCurrentItem="True" >
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Из" Binding="{Binding Path=currency}"/>
+                            <DataGridTextColumn Header="В" Binding="{Binding Path=to_currency}"/>
+                            <DataGridTextColumn Header="Продать" Binding="{Binding Path=sale}"/>
+                            <DataGridTextColumn Header="Купить" Binding="{Binding Path=buy}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Convert">
+                <Grid>
+                    <TextBox HorizontalAlignment="Left" Height="23" Margin="44,180,0,0" TextWrapping="Wrap" Text="{Binding Path=Value1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="120"/>
+                    <TextBox HorizontalAlignment="Left" Height="23" Margin="274,180,0,0" TextWrapping="Wrap" Text="{Binding Path=Value2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Width="120"/>
+                    <ComboBox ItemsSource="{Binding Namesofcurrenices}" SelectedItem="{Binding Path=Currency1.Item, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="44,219,0,0" VerticalAlignment="Top" Width="120"/>
+                    <ComboBox ItemsSource="{Binding Namesofcurrenices}" SelectedItem="{Binding Path=Currency2.Item, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="274,219,0,0" VerticalAlignment="Top" Width="120"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
