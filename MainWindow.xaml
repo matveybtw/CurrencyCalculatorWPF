@@ -10,7 +10,7 @@
         <TabControl TabStripPlacement="Top" Margin="10">
             <TabItem Header="Table">
                 <Grid>
-                    <DataGrid  AutoGenerateColumns="False" ItemsSource="{Binding  Source=exchanges}" Margin="10,10,319,99" IsSynchronizedWithCurrentItem="True" >
+                    <DataGrid  AutoGenerateColumns="False" ItemsSource="{Binding  Path=exchanges}" Margin="10,10,319,99" IsSynchronizedWithCurrentItem="True" >
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Из" Binding="{Binding Path=currency}"/>
                             <DataGridTextColumn Header="В" Binding="{Binding Path=to_currency}"/>

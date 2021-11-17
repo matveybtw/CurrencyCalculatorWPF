@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WPFbase;
 using ProjectCurrencyCalculator.Viewmodels;
 using System.Net;
@@ -21,14 +18,14 @@ namespace ProjectCurrencyCalculator.Viewmodels
     {
         public string currency { get; set; }
         public string to_currency { get; set; }
-        public string buy { get; set; }
-        public string sale { get; set; }
+        public double buy { get; set; }
+        public double sale { get; set; }
     }
     public class MainWindowViewmodel : OnPropertyChangedHandler
     {
         private string value1;
         private string value2;
-        public ObservableCollection<Exchange> exchanges = new ObservableCollection<Exchange>();
+        public ObservableCollection<Exchange> exchanges { get; set; } = new ObservableCollection<Exchange>();
         public MainWindowViewmodel()
         {
             List<WebRequest> wbs = new List<WebRequest>()
@@ -51,17 +48,47 @@ namespace ProjectCurrencyCalculator.Viewmodels
                         Currencies.Add(new Currency()
                         {
                             Name = name,
-                            FromUah = double.Parse(item.GetProperty("buy").GetString().Replace(".", ","))
+                            FromUah = double.Parse(string.Format("{0:0.#####}", double.Parse(item.GetProperty("buy").GetString().Replace(".", ","))))
                         });
-                        exchanges.Add(new Exchange { currency = "UAH", to_currency = name, buy = item.GetProperty("buy").GetString(), sale = item.GetProperty("sale").GetString() });
+                        exchanges.Add(new Exchange { currency = "UAH", to_currency = name, buy = double.Parse(item.GetProperty("buy").GetString().Replace(".", ",")), sale = double.Parse(item.GetProperty("sale").GetString().Replace(".", ",")) });
                         OnPropertyChanged(nameof(exchanges));
                     }
                 }
             }
-            
+            exchanges.Remove(exchanges.Last());
             Currencies.Remove(Currencies.Last());
             Currencies.Find(o => o.Name == "BTC").FromUah *= Currencies.Find(o => o.Name == "USD").FromUah;
             //OnPropertyChanged(nameof(Currencies));
+            foreach (var CurrentCurrency in Currencies)
+            {
+                foreach (var AddCurrency in Currencies)
+                {
+                    if (CurrentCurrency != AddCurrency && CurrentCurrency.Name != "UAH")
+                    {
+                        exchanges.Add(new Exchange
+                        {
+                            currency = CurrentCurrency.Name,
+                            to_currency = AddCurrency.Name,
+                            buy = double.Parse(string.Format("{0:0.#####}", 1.00 / Find(CurrentCurrency.Name).buy * Find(AddCurrency.Name).buy).Replace(".", ",")),
+                            sale = double.Parse(string.Format("{0:0.#####}", 1.00 / Find(CurrentCurrency.Name).sale * Find(AddCurrency.Name).sale).Replace(".", ",")),
+                        });
+                    }
+                }
+            }
+        }
+        Exchange Find(string to_cur)
+        {
+            for (int i = 0; i < 13; i++)
+            {
+                if (exchanges[i].to_currency==to_cur)
+                {
+                    return exchanges[i];
+                }
+            }
+            return new Exchange()
+            {
+                currency="UAH", to_currency="UAH", buy=1.0, sale=1.0
+            };
         }
         public List<string> Namesofcurrenices => Currencies.ConvertAll(o=>o.Name).Distinct().ToList();
         public List<Currency> Currencies { get; set; } = new List<Currency>();
